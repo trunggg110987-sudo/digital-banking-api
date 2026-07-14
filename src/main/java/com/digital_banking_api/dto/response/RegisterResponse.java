@@ -1,4 +1,4 @@
-package com.digital_banking_api.dto.request;
+package com.digital_banking_api.dto.response;
 
 import lombok.AllArgsConstructor;
 import lombok.Getter;
@@ -9,9 +9,9 @@ import lombok.Setter;
 @Setter
 @AllArgsConstructor
 @NoArgsConstructor
-public class RegisterRequest {
+public class RegisterResponse {
+    private Long id;
     private String email;
-    private String password;
     private String fullName;
-    private String phone;
+    private String message;
 }
