@@ -1,4 +1,12 @@
 package com.digital_banking_api.exception;
+public class ResourceNotFoundException extends RuntimeException {
 
-public class ResourceNotFoundException {
+    public ResourceNotFoundException(String message) {
+        super(message);
+    }
+
+    public ResourceNotFoundException(String message, Throwable cause) {
+        super(message, cause);
+    }
+
 }
