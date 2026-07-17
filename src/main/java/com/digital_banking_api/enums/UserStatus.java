@@ -1,4 +1,4 @@
-package com.digital_banking_api.entity;
+package com.digital_banking_api.enums;
 
 public enum UserStatus {
     ACTIVE,

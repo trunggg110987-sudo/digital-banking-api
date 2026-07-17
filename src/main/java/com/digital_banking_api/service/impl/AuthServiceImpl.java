@@ -6,7 +6,7 @@ import com.digital_banking_api.dto.response.LoginResponse;
 import com.digital_banking_api.dto.response.RegisterResponse;
 import com.digital_banking_api.entity.Role;
 import com.digital_banking_api.entity.User;
-import com.digital_banking_api.entity.UserStatus;
+import com.digital_banking_api.enums.UserStatus;
 import com.digital_banking_api.exception.BadRequestException;
 import com.digital_banking_api.exception.ResourceNotFoundException;
 import com.digital_banking_api.exception.UnauthorizedException;

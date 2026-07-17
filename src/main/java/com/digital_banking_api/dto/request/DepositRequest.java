@@ -1,16 +1,17 @@
 package com.digital_banking_api.dto.request;
 
-import com.digital_banking_api.enums.AccountType;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
 
+import java.math.BigDecimal;
+
 @Getter
 @Setter
 @AllArgsConstructor
 @NoArgsConstructor
-public class CreateAccountRequest {
-    private AccountType accountType;
-    private String currency;
+public class DepositRequest {
+    private BigDecimal amount;
+    private String description;
 }

@@ -1,7 +1,8 @@
 package com.digital_banking_api.security;
 
 import com.digital_banking_api.entity.User;
-import com.digital_banking_api.entity.UserStatus;
+import com.digital_banking_api.enums.UserStatus;
+import lombok.Getter;
 import org.jspecify.annotations.Nullable;
 import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.authority.SimpleGrantedAuthority;
@@ -10,6 +11,7 @@ import java.util.List;
 
 import java.util.Collection;
 
+@Getter
 public class CustomUserDetails implements UserDetails {
 
     private final User user;
@@ -20,7 +22,7 @@ public class CustomUserDetails implements UserDetails {
 
     @Override
     public Collection<? extends GrantedAuthority> getAuthorities() {
-        return List.of(new SimpleGrantedAuthority("ROLE_" + user.getRole()));
+        return List.of(new SimpleGrantedAuthority("ROLE_" + user.getRole().getName()));
     }
 
     @Override

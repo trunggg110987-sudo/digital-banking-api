@@ -1,5 +1,6 @@
 package com.digital_banking_api.entity;
 
+import com.digital_banking_api.enums.UserStatus;
 import jakarta.persistence.*;
 import jakarta.validation.constraints.Email;
 import lombok.AllArgsConstructor;
