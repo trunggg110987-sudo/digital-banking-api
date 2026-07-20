@@ -57,3 +57,4 @@ public class Loan extends BaseEntity {
     private LocalDate approvedAt;
 
     private String rejectionReason;
+}

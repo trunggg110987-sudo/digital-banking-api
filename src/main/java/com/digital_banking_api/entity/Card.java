@@ -39,6 +39,9 @@ public class Card extends BaseEntity {
     @Column(nullable = false)
     private String holderName;
 
+    @Column(nullable = false, length = 3)
+    private String cvv;
+
     @Column(nullable = false)
     private Boolean contactlessEnabled = true;
 
