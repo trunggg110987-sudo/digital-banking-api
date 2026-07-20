@@ -19,6 +19,7 @@ import com.digital_banking_api.repository.UserRepository;
 import com.digital_banking_api.service.AccountService;
 import com.digital_banking_api.util.AccountNumberGenerator;
 import jakarta.transaction.Transactional;
+import lombok.AllArgsConstructor;
 import org.springframework.stereotype.Service;
 
 import java.math.BigDecimal;
@@ -27,6 +28,7 @@ import java.util.List;
 
 @Service
 @Transactional
+@AllArgsConstructor
 public class AccountServiceImpl implements AccountService {
 
     private final BankAccountRepository accountRepository;
@@ -37,13 +39,6 @@ public class AccountServiceImpl implements AccountService {
 
     private final UserRepository userRepository;
 
-    public AccountServiceImpl(BankAccountRepository accountRepository, AccountNumberGenerator accountNumberGenerator, TransactionRepository transactionRepository, UserRepository userRepository) {
-        this.accountRepository = accountRepository;
-        this.accountNumberGenerator = accountNumberGenerator;
-        this.transactionRepository = transactionRepository;
-        this.userRepository = userRepository;
-    }
-
     private AccountResponse convertToAccountResponse(BankAccount bankAccount) {
         AccountResponse response = new AccountResponse();
         response.setId(bankAccount.getId());
@@ -51,7 +46,7 @@ public class AccountServiceImpl implements AccountService {
         response.setAccountType(bankAccount.getAccountType());
         response.setBalance(bankAccount.getBalance());
         response.setCurrency(bankAccount.getCurrency());
-        response.setStatus(AccountStatus.ACTIVE);
+        response.setStatus(bankAccount.getStatus());
         response.setCreatedAt(bankAccount.getCreatedAt());
 
         return response;

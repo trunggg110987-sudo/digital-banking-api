@@ -18,4 +18,12 @@ public interface BankAccountRepository extends JpaRepository<BankAccount, Long> 
     @Lock(LockModeType.PESSIMISTIC_WRITE)
     @Query("SELECT a FROM BankAccount a WHERE a.id = :id AND a.user.id = :userId")
     Optional<BankAccount> findByIdAndUserId(@Param("id") Long id, @Param("userId") Long userId);
+
+    @Lock(LockModeType.PESSIMISTIC_WRITE)
+    @Query("SELECT a FROM BankAccount a WHERE a.id = :id")
+    Optional<BankAccount> findByIdWithLock(@Param("id") Long id);
+
+    @Lock(LockModeType.PESSIMISTIC_WRITE)
+    @Query("SELECT a FROM BankAccount a WHERE a.id = :id AND a.user.id = :userId")
+    Optional<BankAccount> findByIdAndUserIdWithLock(@Param("id") Long id, @Param("userId") Long userId);
 }

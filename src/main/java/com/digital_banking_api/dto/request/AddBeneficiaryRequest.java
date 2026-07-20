@@ -5,15 +5,13 @@ import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
 
-import java.math.BigDecimal;
-
 @Getter
 @Setter
 @NoArgsConstructor
 @AllArgsConstructor
-public class TransferRequest {
-    private Long fromAccountId;
-    private Long toAccountId;
-    private BigDecimal amount;
-    private String description;
+public class AddBeneficiaryRequest {
+    private String accountNumber;
+    private String bankName;
+    private String accountHolderName;
+    private String nickname;
 }
