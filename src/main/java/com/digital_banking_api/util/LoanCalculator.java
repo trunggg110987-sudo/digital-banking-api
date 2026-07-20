@@ -68,8 +68,22 @@ public class LoanCalculator {
                     remaining.multiply(monthlyRate)
                             .setScale(2,RoundingMode.HALF_UP);
 
-            BigDecimal principal =
-                    monthlyPayment.subtract(interest);
+            BigDecimal principal;
+            BigDecimal totalAmount;
+
+            // Last installment: adjust to avoid rounding drift
+            if(i == loan.getTermMonths()){
+                principal = remaining;
+                totalAmount = principal.add(interest);
+            } else {
+                principal =
+                        monthlyPayment.subtract(interest);
+
+                if(principal.compareTo(BigDecimal.ZERO) < 0){
+                    principal = BigDecimal.ZERO;
+                }
+                totalAmount = monthlyPayment;
+            }
 
             remaining =
                     remaining.subtract(principal);
@@ -90,7 +104,7 @@ public class LoanCalculator {
 
             repayment.setInterestAmount(interest);
 
-            repayment.setTotalAmount(monthlyPayment);
+            repayment.setTotalAmount(totalAmount);
 
             repayment.setRemainingBalance(remaining);
 

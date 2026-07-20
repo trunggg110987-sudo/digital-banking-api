@@ -124,11 +124,6 @@ public class LoanServiceImpl implements LoanService {
 
         card.setCardNumber(cardNumber);
 
-        String cvv =
-                String.valueOf((int)(Math.random()*900)+100);
-
-        card.setCvv(cvv);
-
         card.setExpiryDate(LocalDate.now().plusYears(5));
 
         card.setHolderName(account.getUser().getFullName());
@@ -304,120 +299,93 @@ public class LoanServiceImpl implements LoanService {
     public LoanResponse disburseLoan(Long loanId) {
 
         Loan loan = loanRepository.findById(loanId)
-                .orElseThrow(() ->
-                        new ResourceNotFoundException("Loan not found"));
+                .orElseThrow(() -> new ResourceNotFoundException("Loan not found"));
 
         if (loan.getStatus() != LoanStatus.APPROVED) {
             throw new BadRequestException("Loan must be APPROVED");
         }
 
-        BankAccount account = loan.getAccount();
+        BankAccount account = accountRepository.findByIdWithLock(loan.getAccount().getId())
+                .orElseThrow(() -> new ResourceNotFoundException("Account not found"));
 
-        BigDecimal newBalance =
-                account.getBalance().add(loan.getPrincipalAmount());
+        if (account.getStatus() != AccountStatus.ACTIVE) {
+            throw new BadRequestException("Account is not active, cannot disburse loan");
+        }
 
-        account.setBalance(newBalance);
-
+        account.setBalance(account.getBalance().add(loan.getPrincipalAmount()));
         accountRepository.save(account);
 
-        createTransaction(
-                account,
-                TransactionType.DEPOSIT,
-                loan.getPrincipalAmount(),
-                "Loan Disbursement"
-        );
+        createTransaction(account, TransactionType.LOAN_DISBURSEMENT, loan.getPrincipalAmount(), "Loan Disbursement");
 
         loan.setStatus(LoanStatus.ACTIVE);
-
         loan.setStartDate(LocalDate.now());
+        loan.setEndDate(LocalDate.now().plusMonths(loan.getTermMonths()));
 
         Loan savedLoan = loanRepository.save(loan);
-
         issueLoanCard(account);
 
-        List<LoanRepayment> schedules =
-                loanCalculator.generateRepaymentSchedule(savedLoan);
-
+        List<LoanRepayment> schedules = loanCalculator.generateRepaymentSchedule(savedLoan);
         repaymentRepository.saveAll(schedules);
 
         return mapLoanToResponse(savedLoan);
-
     }
 
     @Override
-    public void repayLoan(Long loanId) {
+    public void repayLoan(Long loanId, Long userId) {
 
         Loan loan = loanRepository.findById(loanId)
-                .orElseThrow(() ->
-                        new ResourceNotFoundException("Loan not found"));
+                .orElseThrow(() -> new ResourceNotFoundException("Loan not found"));
+
+        if (!loan.getUser().getId().equals(userId)) {
+            throw new ResourceNotFoundException("Loan not found");
+        }
 
         if (loan.getStatus() != LoanStatus.ACTIVE) {
             throw new BadRequestException("Loan is not active");
         }
 
-        List<LoanRepayment> repayments =
-                repaymentRepository.findByLoanIdOrderByInstallmentNumber(loanId);
+        List<LoanRepayment> repayments = repaymentRepository.findByLoanIdOrderByInstallmentNumber(loanId);
 
         LoanRepayment nextRepayment = null;
-
         for (LoanRepayment repayment : repayments) {
-
             if (repayment.getStatus() == RepaymentStatus.PENDING) {
                 nextRepayment = repayment;
                 break;
             }
-
         }
-
         if (nextRepayment == null) {
             throw new BadRequestException("Loan has been fully repaid");
         }
 
-        BankAccount account = loan.getAccount();
+        BankAccount account = accountRepository.findByIdWithLock(loan.getAccount().getId())
+                .orElseThrow(() -> new ResourceNotFoundException("Account not found"));
 
         if (account.getBalance().compareTo(nextRepayment.getTotalAmount()) < 0) {
             throw new InsufficientBalanceException("Insufficient balance");
         }
 
-        BigDecimal newBalance =
-                account.getBalance().subtract(nextRepayment.getTotalAmount());
-
-        account.setBalance(newBalance);
-
+        account.setBalance(account.getBalance().subtract(nextRepayment.getTotalAmount()));
         accountRepository.save(account);
 
-        createTransaction(
-                account,
-                TransactionType.WITHDRAW,
-                nextRepayment.getTotalAmount(),
-                "Loan repayment installment #" +
-                        nextRepayment.getInstallmentNumber()
-        );
+        createTransaction(account, TransactionType.LOAN_REPAYMENT, nextRepayment.getTotalAmount(),
+                "Loan repayment installment #" + nextRepayment.getInstallmentNumber());
 
         nextRepayment.setStatus(RepaymentStatus.PAID);
-
         nextRepayment.setPaidDate(LocalDate.now());
-
         repaymentRepository.save(nextRepayment);
 
         loan.setRemainingBalance(nextRepayment.getRemainingBalance());
 
         boolean completed = true;
-
         for (LoanRepayment repayment : repayments) {
-
             if (repayment.getStatus() == RepaymentStatus.PENDING) {
                 completed = false;
                 break;
             }
-
         }
-
         if (completed) {
             loan.setStatus(LoanStatus.COMPLETED);
         }
-
         loanRepository.save(loan);
-
     }
 }

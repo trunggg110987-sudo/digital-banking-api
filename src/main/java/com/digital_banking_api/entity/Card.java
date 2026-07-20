@@ -25,9 +25,6 @@ public class Card extends BaseEntity {
     @Column(nullable = false, unique = true, length = 16)
     private String cardNumber;
 
-    @Column(nullable = false, length = 3)
-    private String cvv;
-
     @Column(nullable = false)
     private LocalDate expiryDate;
 

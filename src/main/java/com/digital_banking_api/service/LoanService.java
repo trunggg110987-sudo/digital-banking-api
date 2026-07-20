@@ -22,6 +22,6 @@ public interface LoanService {
 
     LoanResponse disburseLoan(Long loanId);
 
-    void repayLoan(Long loanId);
+    void repayLoan(Long loanId, Long userId);
 
 }

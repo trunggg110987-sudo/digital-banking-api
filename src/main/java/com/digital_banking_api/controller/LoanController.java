@@ -29,7 +29,7 @@ public class LoanController {
     }
 
     @PostMapping("/apply")
-    @PreAuthorize("hasRole('USER')")
+    @PreAuthorize("hasRole('CUSTOMER')")
     public ResponseEntity<ApiResponse<LoanResponse>> applyLoan(
             @RequestBody ApplyLoanRequest request) {
 
@@ -41,7 +41,7 @@ public class LoanController {
     }
 
     @GetMapping
-    @PreAuthorize("hasRole('USER')")
+    @PreAuthorize("hasRole('CUSTOMER')")
     public ResponseEntity<ApiResponse<List<LoanResponse>>> getMyLoans() {
 
         Long userId = getCurrentUserId();
@@ -53,7 +53,7 @@ public class LoanController {
     }
 
     @GetMapping("/{id}")
-    @PreAuthorize("hasRole('USER')")
+    @PreAuthorize("hasRole('CUSTOMER')")
     public ResponseEntity<ApiResponse<LoanResponse>> getLoanById(
             @PathVariable Long id) {
 
@@ -66,7 +66,7 @@ public class LoanController {
     }
 
     @GetMapping("/{id}/schedule")
-    @PreAuthorize("hasRole('USER')")
+    @PreAuthorize("hasRole('CUSTOMER')")
     public ResponseEntity<ApiResponse<List<LoanRepaymentResponse>>> getRepaymentSchedule(
             @PathVariable Long id) {
 
@@ -115,13 +115,13 @@ public class LoanController {
     }
 
     @PatchMapping("/{id}/repay")
-    @PreAuthorize("hasRole('USER')")
+    @PreAuthorize("hasRole('CUSTOMER')")
     public ResponseEntity<ApiResponse<Void>> repayLoan(
             @PathVariable Long id) {
 
         Long userId = getCurrentUserId();
         
-        loanService.repayLoan(id);
+        loanService.repayLoan(id, userId);
 
         return ResponseEntity.ok(
                 ApiResponse.success(null, "Loan repayment processed successfully")

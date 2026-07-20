@@ -50,4 +50,10 @@ public class Loan extends BaseEntity {
     @Enumerated(EnumType.STRING)
     private LoanStatus status = LoanStatus.PENDING;
 
-}
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "approved_by")
+    private User approvedBy;
+
+    private LocalDate approvedAt;
+
+    private String rejectionReason;
