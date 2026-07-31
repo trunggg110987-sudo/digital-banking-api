@@ -53,6 +53,7 @@ public class JwtTokenProvider {
     public String extractEmailFromToken(String token) {
         return extractClaims(token).getSubject();
     }
+
     public boolean validateToken(String token) {
         try{
             extractEmailFromToken(token);

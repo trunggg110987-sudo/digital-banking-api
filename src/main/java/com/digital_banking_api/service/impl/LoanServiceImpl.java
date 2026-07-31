@@ -341,7 +341,7 @@ public class LoanServiceImpl implements LoanService {
         }
 
         if (loan.getStatus() != LoanStatus.ACTIVE) {
-            throw new BadRequestException("Loan is not active");
+            throw new BadRequestException("Loan is not active");    
         }
 
         List<LoanRepayment> repayments = repaymentRepository.findByLoanIdOrderByInstallmentNumber(loanId);
