@@ -1,5 +1,6 @@
 package com.digital_banking_api.entity;
 
+import com.digital_banking_api.enums.BeneficiaryStatus;
 import jakarta.persistence.*;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
@@ -28,7 +29,7 @@ public class Beneficiary extends BaseEntity {
     private String accountHolderName;
 
     @Column(nullable = false)
-    private String status = "ACTIVE";
+    private BeneficiaryStatus status;
 
     private String nickname;
 }

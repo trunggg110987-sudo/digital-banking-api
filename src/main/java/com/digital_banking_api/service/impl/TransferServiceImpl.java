@@ -4,10 +4,7 @@ import com.digital_banking_api.dto.request.AddBeneficiaryRequest;
 import com.digital_banking_api.dto.response.BeneficiaryResponse;
 import com.digital_banking_api.dto.response.TransferResponse;
 import com.digital_banking_api.entity.*;
-import com.digital_banking_api.enums.AccountStatus;
-import com.digital_banking_api.enums.TransactionStatus;
-import com.digital_banking_api.enums.TransactionType;
-import com.digital_banking_api.enums.TransferStatus;
+import com.digital_banking_api.enums.*;
 import com.digital_banking_api.exception.*;
 import com.digital_banking_api.repository.*;
 import com.digital_banking_api.service.TransferService;
@@ -56,7 +53,7 @@ public class TransferServiceImpl implements TransferService {
         response.setNickname(beneficiary.getNickname());
         response.setBankName(beneficiary.getBankName());
         response.setAccountHolderName(beneficiary.getAccountHolderName());
-        response.setStatus(beneficiary.getStatus());
+        response.setStatus(BeneficiaryStatus.ACTIVE);
 
         return response;
     }

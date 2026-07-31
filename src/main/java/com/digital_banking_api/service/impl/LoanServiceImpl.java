@@ -141,15 +141,12 @@ public class LoanServiceImpl implements LoanService {
     @Override
     public LoanResponse applyLoan(ApplyLoanRequest request, Long userId) {
 
-        // Validate request
         validateLoanRequest(request);
 
-        // Validate user
         User user = userRepository.findById(userId)
                 .orElseThrow(() ->
                         new ResourceNotFoundException("User not found"));
 
-        // Validate account
         BankAccount account = accountRepository.findById(request.getAccountId())
                 .orElseThrow(() ->
                         new ResourceNotFoundException("Account not found"));

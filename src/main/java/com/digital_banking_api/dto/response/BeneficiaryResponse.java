@@ -1,5 +1,6 @@
 package com.digital_banking_api.dto.response;
 
+import com.digital_banking_api.enums.BeneficiaryStatus;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
@@ -15,5 +16,5 @@ public class BeneficiaryResponse {
     private String bankName;
     private String accountHolderName;
     private String nickname;
-    private String status;
+    private BeneficiaryStatus status;
 }
