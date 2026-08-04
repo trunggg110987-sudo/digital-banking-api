@@ -20,6 +20,7 @@ import com.digital_banking_api.security.CustomUserDetails;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import jakarta.validation.Valid;
+import lombok.AllArgsConstructor;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.security.core.Authentication;
@@ -33,22 +34,13 @@ import java.util.stream.Collectors;
 @RequestMapping("/api/admin")
 @Tag(name = "Admin", description = "Admin management APIs")
 @PreAuthorize("hasRole('ADMIN')")
+@AllArgsConstructor
 public class AdminController {
 
     private final UserRepository userRepository;
     private final BankAccountRepository bankAccountRepository;
     private final LoanRepository loanRepository;
     private final AccountService accountService;
-
-    public AdminController(UserRepository userRepository,
-                           BankAccountRepository bankAccountRepository,
-                           LoanRepository loanRepository,
-                           AccountService accountService) {
-        this.userRepository = userRepository;
-        this.bankAccountRepository = bankAccountRepository;
-        this.loanRepository = loanRepository;
-        this.accountService = accountService;
-    }
 
     @GetMapping("/users")
     @Operation(summary = "List all users")
