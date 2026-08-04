@@ -12,6 +12,7 @@ import com.digital_banking_api.service.RefreshTokenService;
 import com.digital_banking_api.repository.UserRepository;
 import com.digital_banking_api.security.JwtTokenProvider;
 import io.swagger.v3.oas.annotations.Operation;
+import io.swagger.v3.oas.annotations.security.SecurityRequirement;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import jakarta.validation.Valid;
 import org.springframework.http.ResponseEntity;
@@ -38,6 +39,7 @@ public class AuthController {
     }
 
     @PostMapping("/register")
+    @Operation(summary = "Register new user")
     public ResponseEntity<ApiResponse<RegisterResponse>> register(@Valid @RequestBody RegisterRequest registerRequest) {
         RegisterResponse response = authService.register(registerRequest);
         return ResponseEntity.ok(ApiResponse.success(response));
@@ -52,6 +54,7 @@ public class AuthController {
 
     @PostMapping("/refresh-token")
     @Operation(summary = "Refresh access token")
+    @SecurityRequirement(name = "Bearer Authentication")
     public ResponseEntity<ApiResponse<LoginResponse>> refreshToken(@Valid @RequestBody RefreshTokenRequest request) {
         String refreshToken = request.getRefreshToken();
         if (!refreshTokenService.validateRefreshToken(refreshToken)) {
@@ -74,6 +77,7 @@ public class AuthController {
 
     @PostMapping("/logout")
     @Operation(summary = "Logout user")
+    @SecurityRequirement(name = "Bearer Authentication")
     public ResponseEntity<ApiResponse<Void>> logout(@Valid @RequestBody RefreshTokenRequest request) {
         refreshTokenService.revokeRefreshToken(request.getRefreshToken());
         return ResponseEntity.ok(ApiResponse.success(null, "Logged out successfully"));

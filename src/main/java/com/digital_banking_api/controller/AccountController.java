@@ -8,6 +8,9 @@ import com.digital_banking_api.dto.response.TransactionResponse;
 import com.digital_banking_api.response.ApiResponse;
 import com.digital_banking_api.security.CustomUserDetails;
 import com.digital_banking_api.service.AccountService;
+import io.swagger.v3.oas.annotations.Operation;
+import io.swagger.v3.oas.annotations.security.SecurityRequirement;
+import io.swagger.v3.oas.annotations.tags.Tag;
 import jakarta.validation.Valid;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.Authentication;
@@ -17,6 +20,7 @@ import java.util.List;
 
 @RestController
 @RequestMapping("/api/accounts")
+@Tag(name = "Accounts", description = "Bank account management APIs")
 public class AccountController {
 
     private final AccountService accountService;
@@ -26,6 +30,8 @@ public class AccountController {
     }
 
     @PostMapping
+    @Operation(summary = "Create account")
+    @SecurityRequirement(name = "Bearer Authentication")
     public ResponseEntity<ApiResponse<AccountResponse>> createAccount(@Valid @RequestBody CreateAccountRequest request) {
         Long userId = getCurrentUserId();
         AccountResponse response = accountService.createAccount(request, userId);
@@ -34,6 +40,8 @@ public class AccountController {
     }
 
     @GetMapping("/{id}")
+    @Operation(summary = "Get account by id")
+    @SecurityRequirement(name = "Bearer Authentication")
     public ResponseEntity<ApiResponse<AccountResponse>> getAccount(@PathVariable Long id) {
         Long userId = getCurrentUserId();
         AccountResponse response = accountService.getAccountById(id, userId);
@@ -41,6 +49,8 @@ public class AccountController {
     }
 
     @GetMapping
+    @Operation(summary = "Get my accounts")
+    @SecurityRequirement(name = "Bearer Authentication")
     public ResponseEntity<ApiResponse<List<AccountResponse>>> getUserAccounts() {
         Long userId = getCurrentUserId();
         List<AccountResponse> response = accountService.getUserAccounts(userId);
@@ -48,6 +58,8 @@ public class AccountController {
     }
 
     @PostMapping("/{id}/withdraw")
+    @Operation(summary = "Withdraw money")
+    @SecurityRequirement(name = "Bearer Authentication")
     public ResponseEntity<ApiResponse<Void>> withdraw(
             @PathVariable Long id,
             @Valid @RequestBody WithdrawRequest request) {
@@ -57,6 +69,8 @@ public class AccountController {
     }
 
     @PostMapping("/{id}/deposit")
+    @Operation(summary = "Deposit money")
+    @SecurityRequirement(name = "Bearer Authentication")
     public ResponseEntity<ApiResponse<Void>> deposit(
             @PathVariable Long id,
             @Valid @RequestBody DepositRequest request) {
@@ -66,6 +80,8 @@ public class AccountController {
     }
 
     @PatchMapping("/{id}/freeze")
+    @Operation(summary = "Freeze account")
+    @SecurityRequirement(name = "Bearer Authentication")
     public ResponseEntity<ApiResponse<Void>> freezeAccount(@PathVariable Long id) {
         Long userId = getCurrentUserId();
         accountService.freezeAccount(id, userId);
@@ -73,6 +89,8 @@ public class AccountController {
     }
 
     @PatchMapping("/{id}/unfreeze")
+    @Operation(summary = "Unfreeze account")
+    @SecurityRequirement(name = "Bearer Authentication")
     public ResponseEntity<ApiResponse<Void>> unfreezeAccount(@PathVariable Long id) {
         Long userId = getCurrentUserId();
         accountService.unfreezeAccount(id, userId);
@@ -80,6 +98,8 @@ public class AccountController {
     }
 
     @DeleteMapping("/{id}")
+    @Operation(summary = "Close account")
+    @SecurityRequirement(name = "Bearer Authentication")
     public ResponseEntity<ApiResponse<Void>> closeAccount(@PathVariable Long id) {
         Long userId = getCurrentUserId();
         accountService.closeAccount(id, userId);
@@ -87,6 +107,8 @@ public class AccountController {
     }
 
     @GetMapping("/{id}/transactions")
+    @Operation(summary = "Get transaction history")
+    @SecurityRequirement(name = "Bearer Authentication")
     public ResponseEntity<ApiResponse<List<TransactionResponse>>> getTransactions(
             @PathVariable Long id) {
         Long userId = getCurrentUserId();

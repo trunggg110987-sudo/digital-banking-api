@@ -5,6 +5,9 @@ import com.digital_banking_api.dto.response.CardResponse;
 import com.digital_banking_api.response.ApiResponse;
 import com.digital_banking_api.security.CustomUserDetails;
 import com.digital_banking_api.service.CardService;
+import io.swagger.v3.oas.annotations.Operation;
+import io.swagger.v3.oas.annotations.security.SecurityRequirement;
+import io.swagger.v3.oas.annotations.tags.Tag;
 import lombok.AllArgsConstructor;
 import jakarta.validation.Valid;
 import org.springframework.http.ResponseEntity;
@@ -17,6 +20,7 @@ import java.util.List;
 @RestController
 @RequestMapping("/api/cards")
 @AllArgsConstructor
+@Tag(name = "Cards", description = "Card management APIs")
 public class CardController {
 
     private final CardService cardService;
@@ -30,6 +34,8 @@ public class CardController {
     }
 
     @PostMapping
+    @Operation(summary = "Issue card")
+    @SecurityRequirement(name = "Bearer Authentication")
     public ResponseEntity<ApiResponse<CardResponse>> issueCard(
             @Valid @RequestBody CreateCardRequest request){
 
@@ -44,6 +50,8 @@ public class CardController {
     }
 
     @GetMapping
+    @Operation(summary = "Get my cards")
+    @SecurityRequirement(name = "Bearer Authentication")
     public ResponseEntity<ApiResponse<List<CardResponse>>> getCards(){
 
         Long userId = getCurrentUserId();
@@ -53,6 +61,8 @@ public class CardController {
     }
 
     @PatchMapping("/{id}/block")
+    @Operation(summary = "Block card")
+    @SecurityRequirement(name = "Bearer Authentication")
     public ResponseEntity<ApiResponse<Void>> blockCard(
             @PathVariable Long id){
 
@@ -66,6 +76,8 @@ public class CardController {
     }
 
     @PatchMapping("/{id}/unblock")
+    @Operation(summary = "Unblock card")
+    @SecurityRequirement(name = "Bearer Authentication")
     public ResponseEntity<ApiResponse<Void>> unblockCard(
             @PathVariable Long id){
 

@@ -6,6 +6,9 @@ import com.digital_banking_api.dto.response.LoanResponse;
 import com.digital_banking_api.response.ApiResponse;
 import com.digital_banking_api.security.CustomUserDetails;
 import com.digital_banking_api.service.LoanService;
+import io.swagger.v3.oas.annotations.Operation;
+import io.swagger.v3.oas.annotations.security.SecurityRequirement;
+import io.swagger.v3.oas.annotations.tags.Tag;
 import lombok.AllArgsConstructor;
 import jakarta.validation.Valid;
 import org.springframework.http.ResponseEntity;
@@ -19,6 +22,7 @@ import java.util.List;
 @RestController
 @RequestMapping("/api/loans")
 @AllArgsConstructor
+@Tag(name = "Loans", description = "Loan lifecycle APIs")
 public class LoanController {
 
     private final LoanService loanService;
@@ -31,6 +35,8 @@ public class LoanController {
 
     @PostMapping("/apply")
     @PreAuthorize("hasRole('CUSTOMER')")
+    @Operation(summary = "Apply for loan")
+    @SecurityRequirement(name = "Bearer Authentication")
     public ResponseEntity<ApiResponse<LoanResponse>> applyLoan(
             @Valid @RequestBody ApplyLoanRequest request) {
 
@@ -43,6 +49,8 @@ public class LoanController {
 
     @GetMapping
     @PreAuthorize("hasRole('CUSTOMER')")
+    @Operation(summary = "Get my loans")
+    @SecurityRequirement(name = "Bearer Authentication")
     public ResponseEntity<ApiResponse<List<LoanResponse>>> getMyLoans() {
 
         Long userId = getCurrentUserId();
@@ -55,6 +63,8 @@ public class LoanController {
 
     @GetMapping("/{id}")
     @PreAuthorize("hasRole('CUSTOMER')")
+    @Operation(summary = "Get loan by id")
+    @SecurityRequirement(name = "Bearer Authentication")
     public ResponseEntity<ApiResponse<LoanResponse>> getLoanById(
             @PathVariable Long id) {
 
@@ -68,6 +78,8 @@ public class LoanController {
 
     @GetMapping("/{id}/schedule")
     @PreAuthorize("hasRole('CUSTOMER')")
+    @Operation(summary = "Get repayment schedule")
+    @SecurityRequirement(name = "Bearer Authentication")
     public ResponseEntity<ApiResponse<List<LoanRepaymentResponse>>> getRepaymentSchedule(
             @PathVariable Long id) {
 
@@ -81,6 +93,8 @@ public class LoanController {
 
     @PatchMapping("/{id}/approve")
     @PreAuthorize("hasRole('ADMIN')")
+    @Operation(summary = "Approve loan")
+    @SecurityRequirement(name = "Bearer Authentication")
     public ResponseEntity<ApiResponse<LoanResponse>> approveLoan(
             @PathVariable Long id) {
 
@@ -93,6 +107,8 @@ public class LoanController {
 
     @PatchMapping("/{id}/reject")
     @PreAuthorize("hasRole('ADMIN')")
+    @Operation(summary = "Reject loan")
+    @SecurityRequirement(name = "Bearer Authentication")
     public ResponseEntity<ApiResponse<LoanResponse>> rejectLoan(
             @PathVariable Long id) {
 
@@ -105,6 +121,8 @@ public class LoanController {
 
     @PatchMapping("/{id}/disburse")
     @PreAuthorize("hasRole('ADMIN')")
+    @Operation(summary = "Disburse loan")
+    @SecurityRequirement(name = "Bearer Authentication")
     public ResponseEntity<ApiResponse<LoanResponse>> disburseLoan(
             @PathVariable Long id) {
 
@@ -117,6 +135,8 @@ public class LoanController {
 
     @PatchMapping("/{id}/repay")
     @PreAuthorize("hasRole('CUSTOMER')")
+    @Operation(summary = "Repay loan")
+    @SecurityRequirement(name = "Bearer Authentication")
     public ResponseEntity<ApiResponse<Void>> repayLoan(
             @PathVariable Long id) {
 
