@@ -16,31 +16,22 @@ import com.digital_banking_api.util.CardNumberGenerator;
 import com.digital_banking_api.util.CvvGenerator;
 import com.digital_banking_api.util.CvvHasher;
 import jakarta.transaction.Transactional;
+import lombok.AllArgsConstructor;
 import org.springframework.stereotype.Service;
 
+import java.time.LocalDate;
 import java.util.ArrayList;
 import java.util.List;
 
-import java.time.LocalDate;
-
 @Service
 @Transactional
+@AllArgsConstructor
 public class CardServiceImpl implements CardService {
 
     private final CardRepository cardRepository;
     private final BankAccountRepository accountRepository;
     private final CardNumberGenerator cardNumberGenerator;
     private final CvvGenerator cvvGenerator;
-
-    public CardServiceImpl(CardRepository cardRepository,
-                           BankAccountRepository accountRepository,
-                           CardNumberGenerator cardNumberGenerator,
-                           CvvGenerator cvvGenerator) {
-        this.cardRepository = cardRepository;
-        this.accountRepository = accountRepository;
-        this.cardNumberGenerator = cardNumberGenerator;
-        this.cvvGenerator = cvvGenerator;
-    }
 
     private CardResponse convertToCardResponse(Card card) {
 
