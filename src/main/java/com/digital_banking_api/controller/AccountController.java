@@ -8,6 +8,7 @@ import com.digital_banking_api.dto.response.TransactionResponse;
 import com.digital_banking_api.response.ApiResponse;
 import com.digital_banking_api.security.CustomUserDetails;
 import com.digital_banking_api.service.AccountService;
+import jakarta.validation.Valid;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContextHolder;
@@ -25,7 +26,7 @@ public class AccountController {
     }
 
     @PostMapping
-    public ResponseEntity<ApiResponse<AccountResponse>> createAccount(@RequestBody CreateAccountRequest request) {
+    public ResponseEntity<ApiResponse<AccountResponse>> createAccount(@Valid @RequestBody CreateAccountRequest request) {
         Long userId = getCurrentUserId();
         AccountResponse response = accountService.createAccount(request, userId);
         return ResponseEntity.status(201)
@@ -49,7 +50,7 @@ public class AccountController {
     @PostMapping("/{id}/withdraw")
     public ResponseEntity<ApiResponse<Void>> withdraw(
             @PathVariable Long id,
-            @RequestBody WithdrawRequest request) {
+            @Valid @RequestBody WithdrawRequest request) {
         Long userId = getCurrentUserId();
         accountService.withdraw(id, request.getAmount(), userId);
         return ResponseEntity.ok(ApiResponse.success(null, "Withdrawal successful"));
@@ -58,7 +59,7 @@ public class AccountController {
     @PostMapping("/{id}/deposit")
     public ResponseEntity<ApiResponse<Void>> deposit(
             @PathVariable Long id,
-            @RequestBody DepositRequest request) {
+            @Valid @RequestBody DepositRequest request) {
         Long userId = getCurrentUserId();
         accountService.deposit(id, request.getAmount(), userId);
         return ResponseEntity.ok(ApiResponse.success(null, "Deposit successful"));
@@ -66,13 +67,15 @@ public class AccountController {
 
     @PatchMapping("/{id}/freeze")
     public ResponseEntity<ApiResponse<Void>> freezeAccount(@PathVariable Long id) {
-        accountService.freezeAccount(id);
+        Long userId = getCurrentUserId();
+        accountService.freezeAccount(id, userId);
         return ResponseEntity.ok(ApiResponse.success(null, "Account frozen"));
     }
 
     @PatchMapping("/{id}/unfreeze")
     public ResponseEntity<ApiResponse<Void>> unfreezeAccount(@PathVariable Long id) {
-        accountService.unfreezeAccount(id);
+        Long userId = getCurrentUserId();
+        accountService.unfreezeAccount(id, userId);
         return ResponseEntity.ok(ApiResponse.success(null, "Account unfrozen"));
     }
 

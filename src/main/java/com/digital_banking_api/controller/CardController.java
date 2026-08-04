@@ -6,6 +6,7 @@ import com.digital_banking_api.response.ApiResponse;
 import com.digital_banking_api.security.CustomUserDetails;
 import com.digital_banking_api.service.CardService;
 import lombok.AllArgsConstructor;
+import jakarta.validation.Valid;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContextHolder;
@@ -30,7 +31,7 @@ public class CardController {
 
     @PostMapping
     public ResponseEntity<ApiResponse<CardResponse>> issueCard(
-            @RequestBody CreateCardRequest request){
+            @Valid @RequestBody CreateCardRequest request){
 
         Long userId = getCurrentUserId();
 

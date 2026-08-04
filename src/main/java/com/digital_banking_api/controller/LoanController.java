@@ -7,6 +7,7 @@ import com.digital_banking_api.response.ApiResponse;
 import com.digital_banking_api.security.CustomUserDetails;
 import com.digital_banking_api.service.LoanService;
 import lombok.AllArgsConstructor;
+import jakarta.validation.Valid;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.security.core.Authentication;
@@ -31,7 +32,7 @@ public class LoanController {
     @PostMapping("/apply")
     @PreAuthorize("hasRole('CUSTOMER')")
     public ResponseEntity<ApiResponse<LoanResponse>> applyLoan(
-            @RequestBody ApplyLoanRequest request) {
+            @Valid @RequestBody ApplyLoanRequest request) {
 
         Long userId = getCurrentUserId();
         LoanResponse response = loanService.applyLoan(request, userId);

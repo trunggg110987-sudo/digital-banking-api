@@ -12,7 +12,6 @@ import com.digital_banking_api.enums.TransactionType;
 import com.digital_banking_api.exception.BadRequestException;
 import com.digital_banking_api.exception.InsufficientBalanceException;
 import com.digital_banking_api.exception.ResourceNotFoundException;
-import com.digital_banking_api.exception.UnauthorizedException;
 import com.digital_banking_api.repository.BankAccountRepository;
 import com.digital_banking_api.repository.TransactionRepository;
 import com.digital_banking_api.repository.UserRepository;
@@ -20,6 +19,7 @@ import com.digital_banking_api.service.AccountService;
 import com.digital_banking_api.util.AccountNumberGenerator;
 import jakarta.transaction.Transactional;
 import lombok.AllArgsConstructor;
+import org.springframework.security.access.AccessDeniedException;
 import org.springframework.stereotype.Service;
 
 import java.math.BigDecimal;
@@ -84,14 +84,15 @@ public class AccountServiceImpl implements AccountService {
         return account;
     }
 
-    private void createTransaction(BankAccount account, BigDecimal amount, BigDecimal balanceAfter) {
+    private void createTransaction(BankAccount account, BigDecimal amount, BigDecimal balanceAfter,
+                                   TransactionType type, String description) {
 
         Transaction transaction = new Transaction();
 
         transaction.setAccount(account);
-        transaction.setType(TransactionType.WITHDRAW);
+        transaction.setType(type);
         transaction.setAmount(amount);
-        transaction.setDescription("Withdrawal");
+        transaction.setDescription(description);
         transaction.setBalanceAfter(balanceAfter);
         transaction.setStatus(TransactionStatus.SUCCESS);
 
@@ -158,7 +159,7 @@ public class AccountServiceImpl implements AccountService {
 
         accountRepository.save(account);
 
-        createTransaction(account, amount, newBalance);
+        createTransaction(account, amount, newBalance, TransactionType.WITHDRAW, "Withdrawal");
     }
 
     @Override
@@ -174,11 +175,16 @@ public class AccountServiceImpl implements AccountService {
 
         accountRepository.save(account);
 
-        createTransaction(account, amount, newBalance);
+        createTransaction(account, amount, newBalance, TransactionType.DEPOSIT, "Deposit");
     }
 
     @Override
-    public void freezeAccount(Long accountId) {
+    public void freezeAccount(Long accountId, Long userId) {
+        User requester = userRepository.findById(userId)
+                .orElseThrow(() -> new ResourceNotFoundException("User not found"));
+        if (!"ADMIN".equalsIgnoreCase(requester.getRole().getName())) {
+            throw new AccessDeniedException("Only admin can freeze accounts");
+        }
         BankAccount account = accountRepository.findById(accountId).orElseThrow(()
                 -> new ResourceNotFoundException("Account not found"));
 
@@ -191,7 +197,12 @@ public class AccountServiceImpl implements AccountService {
     }
 
     @Override
-    public void unfreezeAccount(Long accountId) {
+    public void unfreezeAccount(Long accountId, Long userId) {
+        User requester = userRepository.findById(userId)
+                .orElseThrow(() -> new ResourceNotFoundException("User not found"));
+        if (!"ADMIN".equalsIgnoreCase(requester.getRole().getName())) {
+            throw new AccessDeniedException("Only admin can unfreeze accounts");
+        }
         BankAccount account = accountRepository.findById(accountId).orElseThrow(()
                 -> new ResourceNotFoundException("Account not found"));
 
@@ -207,10 +218,6 @@ public class AccountServiceImpl implements AccountService {
     public void closeAccount(Long accountId, Long userId) {
         BankAccount account = accountRepository.findByIdAndUserId(accountId, userId).orElseThrow(()
                 -> new ResourceNotFoundException("Account not found"));
-
-        if(!(account.getUser().getId().equals(userId))) {
-            throw new UnauthorizedException("Cannot close another user's account");
-        }
 
         if(account.getBalance().compareTo(BigDecimal.ZERO) != 0) {
             throw new BadRequestException(

@@ -18,9 +18,9 @@ public interface AccountService {
 
     void deposit(Long accountId, BigDecimal amount, Long userId);
 
-    void freezeAccount(Long accountId);
+    void freezeAccount(Long accountId, Long userId);
 
-    void unfreezeAccount(Long accountId);
+    void unfreezeAccount(Long accountId, Long userId);
 
     void closeAccount(Long accountId, Long userId);
     

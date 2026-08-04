@@ -8,6 +8,7 @@ import com.digital_banking_api.response.ApiResponse;
 import com.digital_banking_api.security.CustomUserDetails;
 import com.digital_banking_api.service.TransferService;
 import lombok.AllArgsConstructor;
+import jakarta.validation.Valid;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContextHolder;
@@ -28,7 +29,7 @@ public class TransferController {
     }
 
     @PostMapping
-    public ResponseEntity<ApiResponse<TransferResponse>> transfer(@RequestBody TransferRequest request) {
+    public ResponseEntity<ApiResponse<TransferResponse>> transfer(@Valid @RequestBody TransferRequest request) {
         Long userId = getCurrentUserId();
         TransferResponse response = transferService.transferMoney(
                 request.getFromAccountId(),
@@ -47,7 +48,7 @@ public class TransferController {
     }
 
     @PostMapping("/beneficiaries")
-    public ResponseEntity<ApiResponse<BeneficiaryResponse>> addBeneficiaryRequest(@RequestBody AddBeneficiaryRequest request) {
+    public ResponseEntity<ApiResponse<BeneficiaryResponse>> addBeneficiaryRequest(@Valid @RequestBody AddBeneficiaryRequest request) {
         Long userId = getCurrentUserId();
         BeneficiaryResponse response = transferService.addBeneficiary(request, userId);
         return ResponseEntity.status(201).body(ApiResponse.success(response, "Add beneficiary successful"));

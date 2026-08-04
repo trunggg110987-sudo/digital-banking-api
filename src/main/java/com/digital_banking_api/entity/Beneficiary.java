@@ -29,6 +29,7 @@ public class Beneficiary extends BaseEntity {
     private String accountHolderName;
 
     @Column(nullable = false)
+    @Enumerated(EnumType.STRING)
     private BeneficiaryStatus status;
 
     private String nickname;

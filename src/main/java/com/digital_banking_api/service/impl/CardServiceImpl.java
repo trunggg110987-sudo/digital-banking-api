@@ -14,6 +14,7 @@ import com.digital_banking_api.repository.CardRepository;
 import com.digital_banking_api.service.CardService;
 import com.digital_banking_api.util.CardNumberGenerator;
 import com.digital_banking_api.util.CvvGenerator;
+import com.digital_banking_api.util.CvvHasher;
 import jakarta.transaction.Transactional;
 import org.springframework.stereotype.Service;
 
@@ -46,7 +47,7 @@ public class CardServiceImpl implements CardService {
         CardResponse response = new CardResponse();
 
         response.setId(card.getId());
-        response.setCardNumber(card.getCardNumber());
+        response.setCardNumber(maskCardNumber(card.getCardNumber()));
         response.setHolderName(card.getHolderName());
         response.setExpiryDate(card.getExpiryDate());
         response.setCardType(card.getCardType());
@@ -54,6 +55,14 @@ public class CardServiceImpl implements CardService {
         response.setCreatedAt(card.getCreatedAt());
 
         return response;
+    }
+
+    private String maskCardNumber(String cardNumber) {
+        if (cardNumber == null || cardNumber.length() < 4) {
+            return "****";
+        }
+        String lastFour = cardNumber.substring(cardNumber.length() - 4);
+        return "**** **** **** " + lastFour;
     }
 
     @Override
@@ -77,7 +86,8 @@ public class CardServiceImpl implements CardService {
         card.setAccount(account);
         card.setHolderName(account.getUser().getFullName());
         card.setCardNumber(cardNumberGenerator.generateCardNumber());
-        card.setCvv(cvvGenerator.generateCVV());
+        String cvv = cvvGenerator.generateCVV();
+        card.setCvv(CvvHasher.hashCVV(cvv));
         card.setExpiryDate(LocalDate.now().plusYears(5));
         card.setCardType(request.getCardType());
         card.setStatus(CardStatus.ACTIVE);
