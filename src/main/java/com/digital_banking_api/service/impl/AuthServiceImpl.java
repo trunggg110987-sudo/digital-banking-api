@@ -14,6 +14,7 @@ import com.digital_banking_api.repository.RoleRepository;
 import com.digital_banking_api.repository.UserRepository;
 import com.digital_banking_api.security.JwtTokenProvider;
 import com.digital_banking_api.service.AuthService;
+import com.digital_banking_api.service.RefreshTokenService;
 import jakarta.transaction.Transactional;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
@@ -29,14 +30,18 @@ public class AuthServiceImpl implements AuthService {
 
     private final JwtTokenProvider jwtTokenProvider;
 
+    private final RefreshTokenService refreshTokenService;
+
     public AuthServiceImpl(UserRepository userRepository,
                            RoleRepository roleRepository,
                            PasswordEncoder passwordEncoder,
-                           JwtTokenProvider jwtTokenProvider) {
+                           JwtTokenProvider jwtTokenProvider,
+                           RefreshTokenService refreshTokenService) {
         this.userRepository = userRepository;
         this.roleRepository = roleRepository;
         this.passwordEncoder = passwordEncoder;
         this.jwtTokenProvider = jwtTokenProvider;
+        this.refreshTokenService = refreshTokenService;
     }
 
     @Transactional
@@ -87,7 +92,7 @@ public class AuthServiceImpl implements AuthService {
         }
 
         String accessToken = jwtTokenProvider.generateAccessToken(user.getEmail());
-        String refreshToken = jwtTokenProvider.generateRefreshToken(user.getEmail());
+        String refreshToken = refreshTokenService.generateRefreshToken(user).getToken();
 
         LoginResponse response = new LoginResponse();
         response.setRole(user.getRole().getName());
