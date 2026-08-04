@@ -25,7 +25,6 @@ import com.digital_banking_api.service.TransferService;
 import com.digital_banking_api.util.TransferReferenceGenerator;
 import jakarta.transaction.Transactional;
 import lombok.AllArgsConstructor;
-import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
 
 import java.math.BigDecimal;
@@ -36,7 +35,6 @@ import java.util.List;
 @Service
 @AllArgsConstructor
 @Transactional
-@Slf4j
 public class TransferServiceImpl implements TransferService {
 
     private final TransferRepository transferRepository;
@@ -102,9 +100,6 @@ public class TransferServiceImpl implements TransferService {
 
         BankAccount fromAccount = fromAccountId < toAccountId ? firstLock : secondLock;
         BankAccount toAccount = fromAccountId < toAccountId ? secondLock : firstLock;
-
-        log.debug("From Status = {}", fromAccount.getStatus());
-        log.debug("To Status = {}", toAccount.getStatus());
 
         if (fromAccount.getStatus() != AccountStatus.ACTIVE) {
             throw new BadRequestException("From account status must be ACTIVE");
